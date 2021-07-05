@@ -19,22 +19,19 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ManageJoinViewModel extends AndroidViewModel {
-    private ServiceApi service;
-    private SharedPreference prefs;
+public class ManageJoinViewModel extends BaseViewModel {
+//    private ServiceApi service;
+//    private SharedPreference prefs;
 
     public MutableLiveData<LeaderGroupInfo> leaderGroupRes = new MutableLiveData<>();
     public MutableLiveData<UsersInfo> reqUserListRes = new MutableLiveData<>();
+//    public MutableLiveData<String> joinGroupRes = new MutableLiveData<>();
+    public MutableLiveData<String> deleteRes = new MutableLiveData<>();
 
     public ManageJoinViewModel(@NonNull Application application) {
         super(application);
-        service = RetrofitClient.getClient(application).create(ServiceApi.class);
-        prefs= new SharedPreference(application);
     }
 
-    public User getUserInfoFromShared(){
-        return prefs.getUserInfo();
-    }
 
     public void getLeaderGroup(String userNick){
         service.getLeaderGroup(userNick).enqueue(new Callback<LeaderGroupInfo>() {
@@ -52,7 +49,6 @@ public class ManageJoinViewModel extends AndroidViewModel {
     }
 
     public void getReqUser(String gName){
-        Log.d("SDAf", "getReqUser: "+gName);
         service.getReqUser(gName).enqueue(new Callback<UsersInfo>() {
             @Override
             public void onResponse(Call<UsersInfo> call, Response<UsersInfo> response) {
@@ -61,6 +57,35 @@ public class ManageJoinViewModel extends AndroidViewModel {
 
             @Override
             public void onFailure(Call<UsersInfo> call, Throwable t) {
+
+            }
+        });
+    }
+
+    public void joinGroup(String gName, String gMemberId, String gMemberNick){
+        service.joinGroup(gName,gMemberId,gMemberNick).enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                String result = response.body();
+                joinGroupRes.postValue(result);
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+
+            }
+        });
+    }
+
+    public void deleteRequest(String gName,String userNick){
+        service.deleteRequest(gName,userNick).enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                deleteRes.postValue(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
 
             }
         });

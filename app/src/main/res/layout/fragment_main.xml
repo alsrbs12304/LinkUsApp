@@ -1,13 +1,177 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fillViewport="true"
     tools:context=".view.fragment.MainFragment">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="main" />
+        android:orientation="vertical"
+        >
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/red400">
 
-</FrameLayout>
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/nanum_square_ac_l"
+                    android:text="공부 시간 관리"
+                    android:textColor="@color/white"
+                    android:textSize="20dp" />
+            </FrameLayout>
+        </androidx.appcompat.widget.Toolbar>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="10dp"
+            >
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:src="@drawable/form_half_circle" />
+
+            <LinearLayout
+                android:id="@+id/btn_timer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|bottom"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical"
+                android:padding="5dp">
+
+                <ImageView
+                    android:id="@+id/img_watch"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/icon_stopwatch" />
+
+<!--                <TextView-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_gravity="center"-->
+<!--                    android:fontFamily="@font/nanum_square_ac_b"-->
+<!--                    android:textSize="15dp"-->
+<!--                    android:text="타이머"-->
+<!--                    android:textColor="@color/red400" />-->
+            </LinearLayout>
+        </FrameLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+        </LinearLayout>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/selected_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="8dp"
+            app:cardPreventCornerOverlap="false">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                    <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+                        android:id="@+id/calendar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:focusedMonthDateColor="@color/black"
+                        android:padding="3dp"
+                        app:mcv_arrowColor="@color/black"
+                        app:mcv_calendarMode="month"
+                        app:mcv_headerTextAppearance="@style/CalendarWidgetHeader"
+                        app:mcv_selectionColor="@color/yellow400"
+                        app:mcv_titleAnimationOrientation="vertical"
+                        app:mcv_weekDayTextAppearance="@style/CalendarWidgetWeekDay" />
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end|bottom"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginBottom="5dp"
+                        android:orientation="horizontal"
+                        >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="2dp"
+                            android:fontFamily="@font/nanum_square_ac_l"
+                            android:text="Less"
+                            android:textSize="10dp"
+                            android:layout_gravity="center"
+                            android:textColor="@color/black" />
+
+                        <Button
+                            android:layout_width="10dp"
+                            android:layout_height="10dp"
+                            android:background="@color/red100" />
+
+                        <Button
+                            android:layout_width="10dp"
+                            android:layout_height="10dp"
+                            android:background="@color/red200" />
+
+                        <Button
+                            android:layout_width="10dp"
+                            android:layout_height="10dp"
+                            android:background="@color/red300" />
+
+                        <Button
+                            android:layout_width="10dp"
+                            android:layout_height="10dp"
+                            android:background="@color/red400" />
+
+                        <Button
+                            android:layout_width="10dp"
+                            android:layout_height="10dp"
+                            android:background="@color/red500" />
+
+                        <Button
+                            android:layout_width="10dp"
+                            android:layout_height="10dp"
+                            android:background="@color/red600" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="2dp"
+                            android:fontFamily="@font/nanum_square_ac_l"
+                            android:text="More"
+                            android:textSize="10dp"
+                            android:layout_gravity="center"
+                            android:textColor="@color/black" />
+                    </LinearLayout>
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
+</ScrollView>

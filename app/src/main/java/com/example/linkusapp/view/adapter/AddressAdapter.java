@@ -1,85 +1,101 @@
 package com.example.linkusapp.view.adapter;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.linkusapp.R;
+import com.example.linkusapp.databinding.ItemAddressBinding;
+import com.example.linkusapp.databinding.ItemMyChatRoomBinding;
 import com.example.linkusapp.model.vo.UserAddress;
+import com.example.linkusapp.view.activity.MainActivity;
+import com.example.linkusapp.view.activity.MyStudyGroupActivity;
 import com.example.linkusapp.viewModel.MyPageViewModel;
 
 import java.util.List;
 
-public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.AddressViewHolder> implements View.OnClickListener{
-
-
+public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.AddressViewHolder>{
     private List<UserAddress> mDataset;
+    private List<String> items;
     private Activity getActivity;
+    private Context mContext;
     private MyPageViewModel viewModel;
     private String nickname;
+    private AddressAdapter thisObject = this;
+
     /**/
-    public class AddressViewHolder extends RecyclerView.ViewHolder{
+    public class AddressViewHolder extends RecyclerView.ViewHolder {
+        private ItemAddressBinding binding;
 
-        private TextView addressTV;
-        private CardView cardView;
-        private ImageButton remove;
-
-        public AddressViewHolder(@NonNull View itemView) {
-            super(itemView);
-            cardView = itemView.findViewById(R.id.cardview);
-            addressTV = itemView.findViewById(R.id.item_address);
-            remove = itemView.findViewById(R.id.remove_btn);
+        public AddressViewHolder(@NonNull ItemAddressBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
+            this.binding.setAdapter(thisObject);
         }
 
+        void bind(String address, int position) {
+            binding.setAddress(address);
+            binding.setPosition(position);
+        }
     }
-    public void updateItem(List<UserAddress> items){
-        mDataset = items;
+
+    public void updateItem(List<String> items) {
+//        mDataset = items;
+        this.items = items;
         notifyDataSetChanged();
     }
-    public AddressAdapter(List<UserAddress> addressList, Activity getActivity,MyPageViewModel viewModel,String nickname) {
-        mDataset = addressList;
+
+    public AddressAdapter(List<String> addressList, Activity getActivity, MyPageViewModel viewModel,Context mContext,String nickname) {
+        this.items = addressList;
         this.getActivity = getActivity;
         this.nickname = nickname;
         this.viewModel = viewModel;
+        this.mContext = mContext;
     }
+
     @NonNull
     @Override
     public AddressViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_address,parent,false);
-        return new AddressViewHolder(view);
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        ItemAddressBinding binding = ItemAddressBinding.inflate(inflater, parent, false);
+        return new AddressViewHolder(binding);
     }
+
     @Override
     public void onBindViewHolder(@NonNull AddressViewHolder holder, int position) {
-        UserAddress address = mDataset.get(position);
-        holder.addressTV.setText(address.getAddress());
-        holder.cardView.setTag(position);
-        holder.cardView.setOnClickListener(this);
-        holder.remove.setTag(position);
-        holder.remove.setOnClickListener(this);
+        String address = items.get(position);
+        holder.bind(address, position);
     }
+
     @Override
     public int getItemCount() {
-        return mDataset.size();
+        return items.size();
     }
-    @Override
-    public void onClick(View view) {
-                switch (view.getId()) {
-                    case R.id.cardview:
-                        viewModel.updateAddress(nickname, mDataset.get((int) view.getTag()).getAddress());
-                        break;
-                    case R.id.remove_btn:
-                        viewModel.removeAddress(mDataset.get((int) view.getTag()).getAddress());
-                        mDataset.remove((int)view.getTag());
-                        notifyItemRemoved((int)view.getTag());
-                        notifyItemRangeChanged((int)view.getTag(), getItemCount());
-                        break;
+
+    public void itemClickEvent(int position) {
+        viewModel.updateAddress(nickname, items.get(position));
+//        getActivity.startActivity(new Intent(getActivity, MyStudyGroupActivity.class));
+//        getActivity.finish();
+    }
+
+    public void removeClickEvent(int position) {
+        if(getItemCount()!=0){
+            viewModel.removeAddress(items.get(position));
+            items.remove(position);
+            notifyItemRemoved(position);
+            notifyItemRangeChanged(position, getItemCount());
         }
+
     }
 }

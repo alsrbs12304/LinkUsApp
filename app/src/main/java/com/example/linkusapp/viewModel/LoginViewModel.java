@@ -2,6 +2,7 @@ package com.example.linkusapp.viewModel;
 
 import android.app.Application;
 import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -10,6 +11,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.linkusapp.model.vo.FindPassword;
+import com.example.linkusapp.model.vo.Profile;
 import com.example.linkusapp.model.vo.User;
 import com.example.linkusapp.model.vo.UserInfo;
 import com.example.linkusapp.repository.RetrofitClient;
@@ -18,6 +20,7 @@ import com.example.linkusapp.util.GMailSender;
 import com.example.linkusapp.util.SharedPreference;
 import com.kakao.util.helper.log.Tag;
 
+import java.net.URI;
 import java.util.Iterator;
 
 import javax.mail.MessagingException;
@@ -27,12 +30,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class LoginViewModel extends AndroidViewModel {
+public class LoginViewModel extends BaseViewModel {
 
-    private ServiceApi serviceApi;
-    private SharedPreference prefs;
-    public MutableLiveData<String> loginRsLD = new MutableLiveData<String>();
-    public MutableLiveData<FindPassword> findPwRsLD = new MutableLiveData<FindPassword>();
+//    private ServiceApi serviceApi;
+//    private SharedPreference prefs;
+    public MutableLiveData<FindPassword> loginRsLD = new MutableLiveData<FindPassword>();
+    public MutableLiveData<String> findPwRsLD = new MutableLiveData<String>();
 
     public MutableLiveData<Integer> sendMailRes = new MutableLiveData<Integer>();
     public MutableLiveData<String> nickChkResLD = new MutableLiveData<String>();
@@ -44,39 +47,38 @@ public class LoginViewModel extends AndroidViewModel {
     public MutableLiveData<String> updateUserInfoRsLD = new MutableLiveData<String>();
     private MutableLiveData<String> tkInsertRes = new MutableLiveData<>();
     public MutableLiveData<UserInfo> userLiveData = new MutableLiveData<UserInfo>();
-
-
-
+    public MutableLiveData<String> insertProfileLiveData = new MutableLiveData<String>();
+    public MutableLiveData<Profile> getProfileLiveData = new MutableLiveData<Profile>();
 
     public LoginViewModel(@NonNull Application application){
         super(application);
-        serviceApi = RetrofitClient.getClient(application).create(ServiceApi.class);
-        prefs = new SharedPreference(application);
+//        serviceApi = RetrofitClient.getClient(application).create(ServiceApi.class);
+//        prefs = new SharedPreference(application);
     }
 
-    public void login(String userId,String password) {
-        serviceApi.login(userId, password).enqueue(new Callback<String>() {
+    public void login(String userId) {
+        service.login(userId).enqueue(new Callback<FindPassword>() {
             @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                String result = response.body();
+            public void onResponse(Call<FindPassword> call, Response<FindPassword> response) {
+                FindPassword result = response.body();
                 loginRsLD.postValue(result);
             }
 
             @Override
-            public void onFailure(Call<String> call, Throwable t) {
+            public void onFailure(Call<FindPassword> call, Throwable t) {
             }
         });
     }
-    public void findPw(String userId,String email){
-        serviceApi.findPw(userId,email).enqueue(new Callback<FindPassword>() {
+    public void findPw(String userId,String email,String tempPwd){
+        service.findPw(userId,email,tempPwd).enqueue(new Callback<String>() {
             @Override
-            public void onResponse(Call<FindPassword> call, Response<FindPassword> response) {
-                FindPassword result =response.body();
+            public void onResponse(Call<String> call, Response<String> response) {
+                String result =response.body();
                 findPwRsLD.postValue(result);
             }
 
             @Override
-            public void onFailure(Call<FindPassword> call, Throwable t) {
+            public void onFailure(Call<String> call, Throwable t) {
                 t.getMessage();
             }
         });
@@ -103,7 +105,7 @@ public class LoginViewModel extends AndroidViewModel {
     }
 
     public void sendGoogleIdToken(String idToken){
-        serviceApi.sendGoogleIdToken(idToken).enqueue(new Callback<String>() {
+        service.sendGoogleIdToken(idToken).enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 String result = response.body();
@@ -118,7 +120,7 @@ public class LoginViewModel extends AndroidViewModel {
     }
 
     public void putSocialLogin(String userName, String userId, String loginMethod){
-        serviceApi.putSocialLogin(userName,userId,loginMethod).enqueue(new Callback<String>() {
+        service.putSocialLogin(userName,userId,loginMethod).enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 String result = response.body();
@@ -170,7 +172,7 @@ public class LoginViewModel extends AndroidViewModel {
     }
 
     public void nickNameChk(String userNickname) {
-        serviceApi.nickNameChk(userNickname)
+        service.nickNameChk(userNickname)
                 .enqueue(new Callback<String>() {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
@@ -186,7 +188,7 @@ public class LoginViewModel extends AndroidViewModel {
     }
 
     public void saveInfo(String userId,String nickname,String age,String gender,String address,String loginMethod){
-        serviceApi.saveInfo(userId,nickname,age,gender,address,loginMethod)
+        service.saveInfo(userId,nickname,age,gender,address,loginMethod)
                 .enqueue(new Callback<String>() {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
@@ -202,7 +204,7 @@ public class LoginViewModel extends AndroidViewModel {
     }
     /*탈퇴하기*/
     public void withDraw(String userId,String loginMethod){
-        serviceApi.withDraw(userId,loginMethod).enqueue(new Callback<String>() {
+        service.withDraw(userId,loginMethod).enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 String result = response.body();
@@ -216,7 +218,7 @@ public class LoginViewModel extends AndroidViewModel {
         });
     }
     public void registrationAppToken(String appToken,String nickName){
-        serviceApi.registrationAppToken(appToken,nickName,prefs.getLoginMethod()).enqueue(new Callback<String>() {
+        service.registrationAppToken(appToken,nickName,prefs.getLoginMethod()).enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 tkInsertRes.postValue(response.body());
@@ -229,7 +231,7 @@ public class LoginViewModel extends AndroidViewModel {
         });
     }
     public void updateUserInfo(String userNickname, String userPassword, String loginMethod){
-        serviceApi.updateUserInfo(userNickname,userPassword,loginMethod).enqueue(new Callback<String>() {
+        service.updateUserInfo(userNickname,userPassword,loginMethod).enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 String code = response.body();
@@ -243,7 +245,7 @@ public class LoginViewModel extends AndroidViewModel {
         });
     }
     public void getUserInfoFromDB(){
-        serviceApi.getUserInfo(prefs.getLoginMethod()).enqueue(new Callback<UserInfo>() {
+        service.getUserInfo(prefs.getLoginMethod()).enqueue(new Callback<UserInfo>() {
             @Override
             public void onResponse(Call<UserInfo> call, Response<UserInfo> response) {
                 UserInfo result = response.body();
@@ -256,12 +258,34 @@ public class LoginViewModel extends AndroidViewModel {
             }
         });
     }
-    public void putUserInfo(User user){
-        prefs.putUserInfo(user);
 
-    }
-    public User getUserInfoFromShared(){
-        return prefs.getUserInfo();
+    public void insertProfile(String userNickname, Uri profileUri){
+        service.insertProfile(userNickname,profileUri).enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                String result = response.body();
+                insertProfileLiveData.postValue(result);
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+
+            }
+        });
     }
 
+    public void getProfile(String userNickname){
+        service.getProfile(userNickname).enqueue(new Callback<Profile>() {
+            @Override
+            public void onResponse(Call<Profile> call, Response<Profile> response) {
+                Profile result = response.body();
+                getProfileLiveData.postValue(result);
+            }
+
+            @Override
+            public void onFailure(Call<Profile> call, Throwable t) {
+
+            }
+        });
+    }
 }

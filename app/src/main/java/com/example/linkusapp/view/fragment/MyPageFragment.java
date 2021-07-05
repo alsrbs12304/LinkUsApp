@@ -1,6 +1,9 @@
 package com.example.linkusapp.view.fragment;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -8,14 +11,16 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.linkusapp.R;
+import com.example.linkusapp.databinding.FragmentMyPageBinding;
+import com.example.linkusapp.util.TimerService;
 import com.example.linkusapp.view.activity.HomeActivity;
 import com.example.linkusapp.view.activity.ManageJoinReqActivity;
 import com.example.linkusapp.view.activity.MyStudyGroupActivity;
@@ -31,49 +36,38 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.kakao.sdk.user.UserApiClient;
 
+import java.io.IOException;
+
 public class MyPageFragment extends Fragment {
 
-    private TextView nickNameTV,addressTV,methodTV;
+    private FragmentMyPageBinding binding;
     private LoginViewModel viewModel;
-    private Button logout,withdraw,shareApp,setAddress,updateInfo,myGroup,manageJoinReqBt;
     private String loginMethod,userNickname;
     private GoogleSignInClient mSignInClient;
     private String userId;
-
+    private Bitmap profile;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
+
+    @Override
+    public void onResume() {
+        Log.d("MyPageFragment", "onResume: ");
+        binding.addressTv.setText(viewModel.getUserInfoFromShared().getAddress());
+        super.onResume();
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_my_page, container, false);
-        nickNameTV = (TextView) view.findViewById(R.id.nickname_tv);
-        addressTV = (TextView) view.findViewById(R.id.address_tv);
-        methodTV = (TextView) view.findViewById(R.id.method_tv);
-        logout = (Button) view.findViewById(R.id.mypage_logout);
-        withdraw = (Button) view.findViewById(R.id.withdraw_app);
-        shareApp = (Button) view.findViewById(R.id.share_app);
-        setAddress = (Button) view.findViewById(R.id.my_address);
-        updateInfo = (Button) view.findViewById(R.id.update_info);
-        myGroup = (Button) view.findViewById(R.id.my_study);
-        manageJoinReqBt = (Button)view.findViewById(R.id.sign_access);
+
+        binding = FragmentMyPageBinding.inflate(inflater, container, false);
+        View view = binding.getRoot();
         viewModel = new ViewModelProvider(this).get(LoginViewModel.class);
+        viewModel.getProfile(userNickname);
 
-
-//        viewModel.getUserInfo();
-//        viewModel.getUserInfoRsLD.observe(getViewLifecycleOwner(),userInfo -> {
-//            if(userInfo.getUser()!=null){
-//                userNickname = userInfo.getUser().getUserNickname();
-//                userId = userInfo.getUser().getUserId();
-//                userAddress = userInfo.getUser().getAddress();
-//                loginMethod = userInfo.getUser().getLoginMethod();
-//                nickNameTV.setText(userInfo.getUser().getUserNickname());
-//                addressTV.setText(userInfo.getUser().getAddress());
-//                methodTV.setText(userInfo.getUser().getLoginMethod());
-//            }
-//        });
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.server_client_id))
                 .requestEmail()
@@ -88,19 +82,19 @@ public class MyPageFragment extends Fragment {
         /*유저정보*/
         userId = viewModel.getUserInfoFromShared().getUserId();
         loginMethod = viewModel.getUserInfoFromShared().getLoginMethod();
-        userNickname=viewModel.getUserInfoFromShared().getUserNickname();
-        nickNameTV.setText(userNickname);
-        addressTV.setText(viewModel.getUserInfoFromShared().getAddress());
-        methodTV.setText(loginMethod);
+        userNickname = viewModel.getUserInfoFromShared().getUserNickname();
+        binding.nicknameTv.setText(userNickname);
+        binding.addressTv.setText(viewModel.getUserInfoFromShared().getAddress());
+        binding.methodTv.setText(loginMethod);
         /*회원정보 수정*/
-        updateInfo.setOnClickListener(new View.OnClickListener() {
+        binding.updateInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(getActivity(), UpdateUserActivity.class));
             }
         });
         /*내지역설정*/
-        setAddress.setOnClickListener(new View.OnClickListener() {
+        binding.myAddress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(),SetAddressActivity.class);
@@ -109,7 +103,7 @@ public class MyPageFragment extends Fragment {
             }
         });
         /*내 스터디 그룹*/
-        myGroup.setOnClickListener(new View.OnClickListener() {
+        binding.myStudy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), MyStudyGroupActivity.class);
@@ -117,7 +111,7 @@ public class MyPageFragment extends Fragment {
                 startActivity(intent);
             }
         });
-        manageJoinReqBt.setOnClickListener(new View.OnClickListener() {
+        binding.signAccess.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), ManageJoinReqActivity.class);
@@ -125,7 +119,7 @@ public class MyPageFragment extends Fragment {
             }
         });
         /*앱 공유하기 버튼*/
-        shareApp.setOnClickListener(new View.OnClickListener() {
+        binding.shareApp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent msg = new Intent(Intent.ACTION_SEND);
@@ -136,8 +130,35 @@ public class MyPageFragment extends Fragment {
                 startActivity(Intent.createChooser(msg, "앱을 선택해 주세요"));
             }
         });
+        viewModel.getProfile(userNickname);
+        viewModel.getProfileLiveData.observe(getActivity(),profile1 -> {
+            if(profile1.getCode().equals("200")){
+                Snackbar.make(view.findViewById(R.id.my), "프로필 사진 불러왔습니다.", Snackbar.LENGTH_SHORT).show();
+                Log.d("TAG", "onViewCreated: "+profile1.getProfileUri());
+                if(profile1.getProfileUri().equals(null)){
+                    Drawable drawable = getResources().getDrawable(R.drawable.baseline_profile_picture);
+                    binding.profilePicture.setImageDrawable(drawable);
+                }else{
+                    String uri = profile1.getProfileUri();
+                    Uri image = Uri.parse(uri);
+                    Log.d("profile", "onViewCreated: "+image);
+                    Glide.with(this).load(image).into(binding.profilePicture);
+                    /*try {
+                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(),image);
+                        bitmap = Bitmap.createScaledBitmap(bitmap, 200, 200, true);
+                        binding.profilePicture.setImageBitmap(bitmap);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }*/
+                }
+            }else if(profile1.getCode().equals("204")){
+                Snackbar.make(view.findViewById(R.id.my), "프로필 사진이 없습니다.", Snackbar.LENGTH_SHORT).show();
+            }else{
+                Snackbar.make(view.findViewById(R.id.my), "오류", Snackbar.LENGTH_SHORT).show();
+            }
+        });
         /*탈퇴하기 버튼*/
-        withdraw.setOnClickListener(new View.OnClickListener() {
+        binding.withdrawApp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 viewModel.withDraw(userId,loginMethod);
@@ -152,9 +173,10 @@ public class MyPageFragment extends Fragment {
             }
         });
         /*로그아웃 버튼*/
-        logout.setOnClickListener(new View.OnClickListener() {
+        binding.mypageLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                getActivity().stopService(new Intent(getActivity(), TimerService.class));
                 logout();
                 getActivity().finish();
             }
@@ -204,4 +226,5 @@ public class MyPageFragment extends Fragment {
             }
         });
     }
+
 }

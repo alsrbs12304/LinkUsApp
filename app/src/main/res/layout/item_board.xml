@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <variable
+            name="adapter"
+            type="com.example.linkusapp.view.adapter.BoardAdapter" />
+        <variable
+            name="position"
+            type="Integer" />
+        <variable
+            name="board"
+            type="com.example.linkusapp.model.vo.Board" />
+    </data>
 <androidx.cardview.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/board_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -8,7 +20,9 @@
     android:layout_marginRight="16dp"
     android:layout_marginBottom="3dp"
     android:layout_marginTop="3dp"
-    android:elevation="8dp">
+    android:elevation="8dp"
+    android:onClick="@{()->adapter.itemClickEvent(position)}"
+    >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -27,7 +41,7 @@
                     android:id="@+id/g_part"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="분야"
+                    android:text="@{board.part}"
                     android:background="@drawable/item_board_text_background1"
                     android:textColor="@color/white"
                     android:fontFamily="@font/nanum_square_ac_b" />
@@ -36,7 +50,17 @@
                     android:id="@+id/g_area"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="지역"
+                    android:text="@{board.area}"
+                    android:background="@drawable/item_board_text_background1"
+                    android:textColor="@color/white"
+                    android:layout_marginLeft="10dp"
+                    android:fontFamily="@font/nanum_square_ac_b" />
+
+                <TextView
+                    android:id="@+id/g_join_method"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{board.groupJoinMethod}"
                     android:background="@drawable/item_board_text_background1"
                     android:textColor="@color/white"
                     android:layout_marginLeft="10dp"
@@ -47,18 +71,18 @@
                 android:id="@+id/g_reader"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="그룹장 닉네임"
+                android:text="@{board.leader}"
                 android:layout_marginBottom="5dp"
                 android:fontFamily="@font/nanum_square_ac_b"/>
             <TextView
                 android:id="@+id/g_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="그룹명"
+                android:text="@{board.title}"
                 android:textSize="20dp"
                 android:layout_marginBottom="5dp"
-                android:textColor="@color/blue400"
-                android:fontFamily="@font/nanum_square_ac_b" />
+                android:textColor="@color/black"
+                android:fontFamily="@font/nanum_square_ac_b"/>
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -69,6 +93,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="그룹 목표"
+                    android:textColor="@color/white"
                     android:background="@drawable/item_board_text_background2"
                     android:fontFamily="@font/nanum_square_ac_b" />
 
@@ -76,31 +101,10 @@
                     android:id="@+id/g_purpose"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="전교 1등"
-                    android:textColor="@color/red300"
+                    android:text="@{board.purpose}"
                     android:fontFamily="@font/nanum_square_ac_b"
                     android:layout_marginLeft="10dp"/>
             </LinearLayout>
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="가입 방식"
-                    android:background="@drawable/item_board_text_background2"
-                    android:fontFamily="@font/nanum_square_ac_b" />
-
-                <TextView
-                    android:id="@+id/g_join_method"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="승인"
-                    android:layout_marginLeft="10dp"
-                    android:fontFamily="@font/nanum_square_ac_b"/>
-            </LinearLayout>
         </LinearLayout>
 </androidx.cardview.widget.CardView>
+</layout>

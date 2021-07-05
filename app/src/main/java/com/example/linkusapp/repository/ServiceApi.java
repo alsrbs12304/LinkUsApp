@@ -1,21 +1,30 @@
 package com.example.linkusapp.repository;
 
+import android.net.Uri;
+
 import com.example.linkusapp.model.vo.AddressInfo;
 import com.example.linkusapp.model.vo.BoardInfo;
+import com.example.linkusapp.model.vo.ChatInfo;
+import com.example.linkusapp.model.vo.CommentInfo;
 import com.example.linkusapp.model.vo.FindPassword;
 import com.example.linkusapp.model.vo.LeaderGroupInfo;
-import com.example.linkusapp.model.vo.MemberCount;
-import com.example.linkusapp.model.vo.User;
+import com.example.linkusapp.model.vo.Profile;
+import com.example.linkusapp.model.vo.TimerInfo;
 import com.example.linkusapp.model.vo.UserInfo;
 import com.example.linkusapp.model.vo.UsersInfo;
 
-import java.util.List;
-
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.GET;
+import retrofit2.http.PUT;
+import retrofit2.http.Part;
 import retrofit2.http.Query;
 
 public interface ServiceApi {
@@ -32,12 +41,12 @@ public interface ServiceApi {
     @GET("/android/idChk")
     Call<String> chkId(@Query("userId") String userId);
 
-    @FormUrlEncoded
-    @POST("/android/login")
-    Call<String> login(@Field("userId") String userId,@Field("password") String password);
+    @GET("/android/login")
+    Call<FindPassword> login(@Query("userId") String userId);
 
-    @GET("/android/findPw")
-    Call<FindPassword> findPw(@Query("userId") String userId, @Query("email") String email);
+    @FormUrlEncoded
+    @POST("/android/findPw")
+    Call<String> findPw(@Field("userId") String userId,@Field("email") String email ,@Field("password") String password);
 
     @GET("/android/nickNameChk")
     Call<String> nickNameChk(@Query("userNickname") String userNickname);
@@ -53,6 +62,17 @@ public interface ServiceApi {
     @GET("/android/chkScdUserInfo")
     Call<String> chkScdUserInfo(@Query("userId") String userId, @Query("loginMethod") String loginMethod);
 
+    /*유저 프로필*/
+    @FormUrlEncoded
+    @POST("/android/insertProfile")
+    Call<String> insertProfile(@Field("userNickname") String userNickname,@Field("profileUri") Uri profileUri);
+
+    @GET("/android/getProfile")
+    Call<Profile> getProfile(@Query("userNickname") String userNickname);
+    @Multipart
+    @POST("/upload")
+    Call<ResponseBody> postImage(@Part MultipartBody.Part image, @Part("upload") RequestBody name);
+    /*여기까지*/
 
     @FormUrlEncoded
     @POST("/android/userInfo")
@@ -96,13 +116,10 @@ public interface ServiceApi {
     Call<BoardInfo> getPartBoard(@Query("gPart") String gPart);
 
     @GET("/android/boardSearch")
-    Call<BoardInfo> getSearchBoard(@Query("keyword") String keyword);
+    Call<BoardInfo> getSearchBoard(@Query("keyword1") String keyword1, @Query("keyword2") String keyword2);
 
-    @GET("/android/boardAddress")
-    Call<BoardInfo> getAddressBoard(@Query("address") String address);
-
-    @GET("/android/boardCondition")
-    Call<BoardInfo> getConditionBoard(@Query("gPart") String gPart, @Query("address") String address);
+    @GET("/android/boardRefresh")
+    Call<BoardInfo> getRefreshBoard();
 
     @FormUrlEncoded
     @POST("/android/withdraw")
@@ -135,14 +152,11 @@ public interface ServiceApi {
     @GET("/android/userBoardAll")
     Call<BoardInfo> userBoardAll(@Query("userNickname") String userNickname);
 
-    @GET("/android/allAddress")
-    Call<BoardInfo> allAddress();
-
     @GET("/android/optionBoard")
     Call<BoardInfo> optionBoard(@Query("g_part") String gPart, @Query("address") String address);
 
-    @GET("/android/countGroupMember")
-    Call<MemberCount> getMemberCount(@Query("gName") String gName);
+    @GET("/android/getGroupMember")
+    Call<UsersInfo> getGroupMember(@Query("gName") String gName);
 
     @FormUrlEncoded
     @POST("/android/joinGroup")
@@ -154,8 +168,17 @@ public interface ServiceApi {
     @GET("/android/getReqUser")
     Call<UsersInfo> getReqUser(@Query("gName") String gName);
 
-//-------------------------FCM 관련 메소드------------------------
+//-------------------------CommentViewModel 메소드------------------------
+    /*comment 추가*/
+    @FormUrlEncoded
+    @POST("android/insertComment")
+    Call<String> insertComment(@Field("bName") String bName,@Field("bWriter") String bWriter,@Field("bComment") String bComment,@Field("bSecret") boolean bSecret);
 
+    /*comment 불러오기*/
+    @GET("android/getComment")
+    Call<CommentInfo> getComment(@Query("bName") String bName);
+
+//-------------------------FCM 관련 메소드------------------------
     //fcm 전송메소드
     @FormUrlEncoded
     @POST("/android/requestJoin")
@@ -178,4 +201,44 @@ public interface ServiceApi {
     @POST("/android/insertRequest")
     Call<String> insertRequest(@Field("gName")String gName, @Field("userNick")String userNick);
 
+    @DELETE("/android/deleteRequest")
+    Call<String> deleteRequest(@Query("gName")String gName, @Query("userNick")String userNick);
+
+    //유저의 대표 스터디 그룹을 선택했을 때 USER테이블의 대표 스터디그룹 컬럼을 업데이트 하는 메소드
+    @PUT("/android/updatesSelected")
+    Call<String> updateSelected(@Query("userNick") String userNick,@Query("gName") String gName);
+
+    //유저가 선택한 대표 스터디 그룹의 정보를 불러오는 메소드
+    @GET("/android/getSelected")
+    Call<BoardInfo> getSelectedGroup(@Query("userNick") String userNick);
+
+
+    //공부시간 최초기록
+    @FormUrlEncoded
+    @POST("/android/insertTimer")
+    Call<String> insertTimer(@Field("userNick") String userNick, @Field("time") String time);
+
+    //공부시간 업데이트
+    @PUT("/android/updateTimer")
+    Call<String> updateTimer(@Query("userNick") String userNick, @Query("time") String time);
+
+    //사용자의 전체 공부시간 조회
+    @GET("/android/entireRecord")
+    Call<TimerInfo> getEntireRecord(@Query("userNick") String userNick);
+
+    //오늘 공부한 시간 조회
+    @GET("/android/getTodayRecord")
+    Call<TimerInfo> getTodayRecord(@Query("userNick") String userNick);
+
+    @FormUrlEncoded
+    @POST("/android/sendMessage")
+    Call<String> sendMessage(
+            @Field("gName") String gName,
+            @Field("myNickName")String myNickName,
+            @Field("yourNickName")String yourNickName,
+            @Field("msg") String msg,
+            @Field("msgTime")String msgTime);
+
+    @GET("/android/getMessageList")
+    Call<ChatInfo>getMessageList(@Query("gName") String gName, @Query("myNickName") String myNickName, @Query("yourNickName") String yourNickName);
 }

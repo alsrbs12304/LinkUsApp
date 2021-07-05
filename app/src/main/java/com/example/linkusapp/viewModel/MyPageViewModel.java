@@ -10,6 +10,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.linkusapp.model.vo.AddressInfo;
 import com.example.linkusapp.model.vo.FindPassword;
+import com.example.linkusapp.model.vo.UserAddress;
 import com.example.linkusapp.model.vo.UserInfo;
 import com.example.linkusapp.repository.RetrofitClient;
 import com.example.linkusapp.repository.ServiceApi;
@@ -22,21 +23,19 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MyPageViewModel extends AndroidViewModel {
+public class MyPageViewModel extends BaseViewModel {
 
-    private ServiceApi serviceApi;
+//    private ServiceApi serviceApi;
     public MutableLiveData<String> addAddressRsLD = new MutableLiveData<String>();
     public MutableLiveData<String> updateAddressRsLD = new MutableLiveData<String>();
-    public MutableLiveData<AddressInfo> userAddressRsLD = new MutableLiveData<AddressInfo>();
+    public MutableLiveData<List<String>> userAddressRsLD = new MutableLiveData<List<String>>();
     public MutableLiveData<String> removeAddressRsLD = new MutableLiveData<String>();
-
     public MyPageViewModel(@NonNull Application application) {
         super(application);
-        serviceApi = RetrofitClient.getClient(application).create(ServiceApi.class);
     }
 
     public void addAddress(String userNickname,String address){
-        serviceApi.addAddress(userNickname,address).enqueue(new Callback<String>() {
+        service.addAddress(userNickname,address).enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 String code = response.body();
@@ -51,7 +50,7 @@ public class MyPageViewModel extends AndroidViewModel {
     }
 
     public void updateAddress(String userNickname, String address){
-        serviceApi.updateAddress(userNickname,address).enqueue(new Callback<String>() {
+        service.updateAddress(userNickname,address).enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 String code =response.body();
@@ -65,11 +64,21 @@ public class MyPageViewModel extends AndroidViewModel {
     }
 
     public void userAddress(String userNickname){
-        serviceApi.userAddress(userNickname).enqueue(new Callback<AddressInfo>() {
+        service.userAddress(userNickname).enqueue(new Callback<AddressInfo>() {
             @Override
             public void onResponse(Call<AddressInfo> call, Response<AddressInfo> response) {
                 AddressInfo result = response.body();
-                userAddressRsLD.postValue(result);
+                List<String> items = new ArrayList<>();
+                if(result.getCode().equals("200")){
+                    for(int i = 0; i<result.getJsonArray().size(); i++){
+                        items.add(result.getJsonArray().get(i).getAddress());
+                    }
+                }else if(result.getCode().equals("204")){
+
+                }else{
+                    items =null;
+                }
+                userAddressRsLD.postValue(items);
             }
 
             @Override
@@ -80,7 +89,7 @@ public class MyPageViewModel extends AndroidViewModel {
     }
 
     public void removeAddress(String userAddress){
-        serviceApi.removeAddress(userAddress).enqueue(new Callback<String>() {
+        service.removeAddress(userAddress).enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 String result = response.body();
@@ -93,4 +102,5 @@ public class MyPageViewModel extends AndroidViewModel {
             }
         });
     }
+
 }

@@ -1,175 +1,268 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/enter_main_group_activity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
+    android:orientation="vertical"
     tools:context=".view.activity.EnterMainGroupActivity">
 
-    <LinearLayout
+    <!--    <LinearLayout-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="match_parent"-->
+    <!--        android:orientation="vertical">-->
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        >
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:background="@color/white">
+        android:layout_height="60dp"
+        android:background="@color/white">
 
-            <ImageButton
-                android:id="@+id/back_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@color/transparent"
-                android:src="@drawable/icon_close"/>
+        <ImageButton
+            android:id="@+id/back_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            android:src="@drawable/icon_close" />
 
-            <TextView
-                android:id="@+id/txt_group_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:fontFamily="@font/nanum_barun_gothic"
-                android:text="그룹명"
-                android:textColor="@color/black"
-                android:textSize="23dp" />
+        <TextView
+            android:id="@+id/group_name_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:fontFamily="@font/nanum_barun_gothic"
+            android:text="그룹명"
+            android:textColor="@color/black"
+            android:textSize="23dp" />
 
-            <ImageButton
-                android:id="@+id/setting_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/baseline_settings_24"
-                android:background="@color/transparent"
-                android:layout_gravity="right"
-                android:layout_marginRight="16dp"
-                />
+        <ImageButton
+            android:id="@+id/member_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginRight="16dp"
+            android:background="@color/transparent"
+            android:src="@drawable/icon_member" />
+    </androidx.appcompat.widget.Toolbar>
 
-        </androidx.appcompat.widget.Toolbar>
-        <View
-            android:id="@+id/toolbar_div"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@+id/toolbar"
-            android:background="@color/gray300" />
+    <View
+        android:id="@+id/toolbar_div"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray300" />
+
+    <androidx.drawerlayout.widget.DrawerLayout
+        android:id="@+id/drawer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginLeft="16dp"
-            >
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_gravity="center"
-                android:src="@drawable/icon_reader"
-                />
-            <TextView
-                android:id="@+id/leader_tv"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:fontFamily="@font/nanum_barun_gothic"
-                android:layout_marginLeft="5dp"
-                android:text="리더 : 장영우"
-                android:textColor="@color/black"
-                />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="16dp"
-            >
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_gravity="center"
-                android:src="@drawable/icon_add_member"
-                />
-            <TextView
-                android:id="@+id/part_tv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/nanum_barun_gothic"
-                android:layout_marginLeft="5dp"
-                android:text="분야 : 전체"
-                android:textColor="@color/black" />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginLeft="16dp"
-            >
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_gravity="center"
-                android:src="@drawable/icon_calendar"
-                />
-            <TextView
-                android:id="@+id/period_tv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="5dp"
-                android:fontFamily="@font/nanum_barun_gothic"
-                android:text="기간 : 2021-01-01~2022-01-01"
-                android:textColor="@color/black" />
-        </LinearLayout>
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="25dp"
-                android:layout_marginLeft="30dp"
-                android:background="@drawable/form_button_round"
-                android:fontFamily="@font/nanum_barun_gothic"
-                android:gravity="center_vertical"
-                android:paddingLeft="15dp"
-                android:paddingRight="15dp"
-                android:text="그룹 공지사항"
-                android:textColor="@color/white"
-                android:translationY="5dp"
-                android:translationZ="5dp" />
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
-                android:layout_margin="16dp"
-                android:background="@drawable/form_round_layout">
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="10dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/icon_reader" />
 
                 <TextView
-                    android:id="@+id/notice_tv"
+                    android:id="@+id/leader_tv"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_margin="20dp"
-                    android:text="그룹 공지사항"
+                    android:layout_marginLeft="5dp"
                     android:fontFamily="@font/nanum_barun_gothic"
-                    android:textSize="12dp" />
+                    android:text="리더 : 리더이름"
+                    android:textColor="@color/black" />
             </LinearLayout>
-        </FrameLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/comment_rv"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-        </androidx.recyclerview.widget.RecyclerView>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginBottom="10dp"
+                android:orientation="horizontal">
 
-        <ImageButton
-            android:id="@+id/add_comment"
-            android:layout_margin="16dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/baseline_add_24"
-            android:layout_gravity="right"
-            android:padding="13dp"
-            android:background="@drawable/button_background6"/>
-    </LinearLayout>
-</ScrollView>
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/icon_add_member" />
+
+                <TextView
+                    android:id="@+id/part_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:fontFamily="@font/nanum_barun_gothic"
+                    android:text="분야 : 전체"
+                    android:textColor="@color/black" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginBottom="10dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/icon_calendar" />
+
+                <TextView
+                    android:id="@+id/period_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="5dp"
+                    android:fontFamily="@font/nanum_barun_gothic"
+                    android:text="기간 : 2021-01-01~2022-01-01"
+                    android:textColor="@color/black" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/group_goal_image_foreground" />
+
+                <TextView
+                    android:id="@+id/group_goal_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="5dp"
+                    android:fontFamily="@font/nanum_barun_gothic"
+                    android:text="그룹 목표 : 앱개발자 취업하기"
+                    android:textColor="@color/black" />
+            </LinearLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="25dp"
+                    android:layout_marginLeft="30dp"
+                    android:background="@drawable/form_button_round"
+                    android:fontFamily="@font/nanum_barun_gothic"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="15dp"
+                    android:paddingRight="15dp"
+                    android:text="그룹 공지사항"
+                    android:textColor="@color/white"
+                    android:translationY="5dp"
+                    android:translationZ="5dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:background="@drawable/form_round_layout"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/notice_tv"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="20dp"
+                        android:fontFamily="@font/nanum_barun_gothic"
+                        android:text="그룹 공지사항"
+                        android:textSize="12dp" />
+                </LinearLayout>
+            </FrameLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/comment_rv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+            <!--    </ScrollView>-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="1dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <CheckedTextView
+                    android:id="@+id/chk_secret_write"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="4"
+                    android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+                    android:checked="false"
+                    android:fontFamily="@font/nanum_barun_gothic"
+                    android:gravity="center"
+                    android:paddingLeft="10dp"
+                    android:text="비밀"
+                    android:textColor="@color/black"
+                    android:textSize="15dp" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <EditText
+                        android:id="@+id/comment_edittext"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:fontFamily="@font/nanum_barun_gothic"
+                        android:gravity="center_vertical"
+                        android:hint="댓글을 입력해주세요."
+                        android:textColor="@color/black"
+                        android:textSize="15dp" />
+
+                    <ImageButton
+                        android:id="@+id/comment_send_button"
+                        android:layout_width="30dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="end"
+                        android:background="@color/transparent"
+                        android:src="@drawable/send_comment_foreground"
+                        android:translationX="-5dp"
+                        android:translationZ="1dp" />
+
+                </FrameLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="300dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:background="@color/white"
+            android:orientation="vertical">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/member_rv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+        </LinearLayout>
+    </androidx.drawerlayout.widget.DrawerLayout>
+
+</LinearLayout>

@@ -6,9 +6,10 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.linkusapp.model.vo.MemberCount;
+import com.example.linkusapp.model.vo.GroupMember;
 import com.example.linkusapp.model.vo.User;
 import com.example.linkusapp.model.vo.UserInfo;
+import com.example.linkusapp.model.vo.UsersInfo;
 import com.example.linkusapp.repository.RetrofitClient;
 import com.example.linkusapp.repository.ServiceApi;
 import com.example.linkusapp.util.SharedPreference;
@@ -17,21 +18,21 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class CreateGrpViewModel extends AndroidViewModel {
-    private ServiceApi service;
-    private SharedPreference prefs;
+public class CreateGrpViewModel extends BaseViewModel {
+//    private ServiceApi service;
+//    private SharedPreference prefs;
 
     public MutableLiveData<UserInfo> userLiveData = new MutableLiveData<UserInfo>();
     public MutableLiveData<String> createGroupRes = new MutableLiveData<>();
-    public MutableLiveData<MemberCount> memberCount = new MutableLiveData<>();
+    public MutableLiveData<UsersInfo> memberCount = new MutableLiveData<>();
     public MutableLiveData<String> joinGroupRes = new MutableLiveData<>();
     public MutableLiveData<String> insertReqRes = new MutableLiveData<>();
     public MutableLiveData<String> chkGnameRes = new MutableLiveData<>();
 
     public CreateGrpViewModel(@NonNull Application application) {
         super(application);
-        this.service = RetrofitClient.getClient(application).create(ServiceApi.class);
-        this.prefs = new SharedPreference(application);
+//        this.service = RetrofitClient.getClient(application).create(ServiceApi.class);
+//        this.prefs = new SharedPreference(application);
     }
     public void getUserInfo(){
         service.getUserInfo(prefs.getLoginMethod()).enqueue(new Callback<UserInfo>() {
@@ -73,19 +74,17 @@ public class CreateGrpViewModel extends AndroidViewModel {
             }
         });
     }
-    public User getUserInfoFromShared(){
-        return prefs.getUserInfo();
-    }
 
-    public void getMemberCount(String gName){
-        service.getMemberCount(gName).enqueue(new Callback<MemberCount>() {
+    public void getGroupMember(String gName){
+        service.getGroupMember(gName).enqueue(new Callback<UsersInfo>() {
             @Override
-            public void onResponse(Call<MemberCount> call, Response<MemberCount> response) {
-                memberCount.postValue(response.body());
+            public void onResponse(Call<UsersInfo> call, Response<UsersInfo> response) {
+                UsersInfo result = response.body();
+                memberCount.postValue(result);
             }
 
             @Override
-            public void onFailure(Call<MemberCount> call, Throwable t) {
+            public void onFailure(Call<UsersInfo> call, Throwable t) {
 
             }
         });
